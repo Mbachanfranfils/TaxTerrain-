@@ -1,7 +1,9 @@
 import type { Region } from "@/types";
 import { mockRegions } from "@/services/mock/regions";
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK !== "false";
+// Force MOCK data to true since the actual backend is not yet available.
+// When the real backend is ready, change this back to: import.meta.env.VITE_USE_MOCK !== "false"
+const USE_MOCK = true;
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 export const fetchRegions = async (): Promise<Region[]> => {
