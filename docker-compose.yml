@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   taxterrain:
     # Build the image from the Dockerfile in the current directory
