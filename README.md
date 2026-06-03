@@ -84,3 +84,76 @@ To build the application for production:
 npm run build
 \`\`\`
 The compiled assets will be located in the `dist/client` directory.
+
+## 🐳 Docker
+
+The project is fully containerised using a **multi-stage Docker build**:
+
+| Stage | Base Image | Purpose |
+|---|---|---|
+| `builder` | `node:20-alpine` | Install dependencies and run `npm run build` |
+| `runner` | `nginx:1.27-alpine` | Serve the compiled `dist/client` via Nginx |
+
+The final image is lean (~25 MB) because only the compiled static files and the Nginx web server are included — Node.js and all dev dependencies are discarded after the build stage.
+
+### Files Added
+
+| File | Description |
+|---|---|
+| `Dockerfile` | Multi-stage build definition |
+| `nginx.conf` | Nginx config with SPA fallback, asset caching, security headers & gzip |
+| `docker-compose.yml` | One-command local runner |
+| `.dockerignore` | Excludes `node_modules`, `.git`, `dist`, secrets, etc. from the build context |
+
+### Running with Docker Compose (Recommended)
+
+**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) must be installed and running.
+
+```bash
+# Build the image and start the container
+docker compose up --build
+
+# Run in the background (detached mode)
+docker compose up --build -d
+
+# Stop the container
+docker compose down
+```
+
+The app will be available at **http://localhost:3000**.
+
+### Running with Plain Docker
+
+```bash
+# Build the image
+docker build -t taxterrain .
+
+# Run the container
+docker run -p 3000:80 --name taxterrain-app taxterrain
+
+# Stop and remove the container
+docker stop taxterrain-app && docker rm taxterrain-app
+```
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────┐
+│               Docker Container               │
+│                                             │
+│   ┌─────────────────────────────────────┐   │
+│   │         Nginx (port 80)             │   │
+│   │                                     │   │
+│   │  /assets/* ──► static files (1yr)  │   │
+│   │  /*        ──► /_shell.html (SPA)  │   │
+│   └─────────────────────────────────────┘   │
+│                                             │
+│   /usr/share/nginx/html/                    │
+│   ├── _shell.html   ◄── SPA entry point     │
+│   └── assets/       ◄── JS/CSS bundles      │
+└─────────────────────────────────────────────┘
+        ▲
+        │  http://localhost:3000
+        │
+      Host Machine
+```

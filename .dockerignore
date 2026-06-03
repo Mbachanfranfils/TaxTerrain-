@@ -1,0 +1,38 @@
+# --- Dependencies ---
+node_modules
+.pnpm-store
+
+# --- Build output (will be rebuilt inside Docker) ---
+dist
+.tanstack
+.wrangler
+.lovable
+
+# --- Version control ---
+.git
+.gitignore
+
+# --- OS & editor junk ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Logs ---
+npm-debug.log*
+pnpm-debug.log*
+*.log
+
+# --- Environment files (never ship secrets) ---
+.env
+.env.*
+!.env.example
+
+# --- Debug/temp files ---
+debug-playwright.js
+build-error.txt
+
+# --- Docker files themselves (avoid recursion) ---
+Dockerfile
+docker-compose.yml
+nginx.conf

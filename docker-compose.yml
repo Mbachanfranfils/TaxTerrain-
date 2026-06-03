@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  taxterrain:
+    # Build the image from the Dockerfile in the current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Map port 3000 on your machine to port 80 inside the container
+    ports:
+      - "3000:80"
+
+    # Name the running container for easy reference
+    container_name: taxterrain-app
+
+    # Automatically restart the container if it crashes
+    restart: unless-stopped
+
+    # Environment variables (optional, for future backend integration)
+    # environment:
+    #   - VITE_USE_MOCK=true
+    #   - VITE_API_BASE_URL=https://your-api.example.com
